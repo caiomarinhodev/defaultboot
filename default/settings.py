@@ -27,6 +27,8 @@ SECRET_KEY = '=6iehk1nzu)(iv%&lk%_qo+)$dd_eq-(3c8_@!)$7b7c0p^t3m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SITE_ID = 1
+
 ALLOWED_HOSTS = ['*']
 
 CLOUDINARY = {
@@ -43,8 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
-    'cloudinary',
     'cpf_field',
     'phone_field',
     'phonenumber_field',
@@ -61,9 +63,7 @@ INSTALLED_APPS = [
 
     'djmoney',
     'app',
-    'ckeditor',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
