@@ -31,7 +31,7 @@ class BaseCreateView(BaseView, generic.CreateView):
     View based on CreateView from django.views.generic.
     Use a custom template for a form display
     """
-    template_name = "{}/create.html".format(base_conf.style)
+    template_name = "create.html"
 
     def get_context_data(self, **kwargs):
         context = super(BaseCreateView, self).get_context_data(**kwargs)
@@ -57,7 +57,7 @@ class BaseUpdateView(BaseView, generic.UpdateView):
     View based on Update from django.views.generic.
     Use a custom template for a form display
     """
-    template_name = "{}/update.html".format(base_conf.style)
+    template_name = "update.html"
     context_object_name = "element"
 
     def get_context_data(self, **kwargs):
@@ -99,7 +99,7 @@ class BaseListView(BaseView, generic.ListView):
     View based on ListView from django.views.generic.
     Use a custom template for iterate a list
     """
-    template_name = "{}/list.html".format(base_conf.style)
+    template_name = "list.html"
     context_object_name = "list"
 
     def get_context_data(self, **kwargs):
@@ -117,7 +117,7 @@ class BasePaginationListView(BaseView, generic.ListView):
     Use a custom template for iterate a list.
     Uses django.core.paginator to slice the result in pages
     """
-    template_name = "{}/pagination_list.html".format(base_conf.style)
+    template_name = "pagination_list.html"
     context_object_name = "list"
 
     def get_context_data(self, **kwargs):
@@ -154,7 +154,7 @@ class BaseGridView(BaseListView):
     View based on ListView from django.views.generic.
     Use a custom template for iterate a list in a grid
     """
-    template_name = "{}/grid.html".format(base_conf.style)
+    template_name = "grid.html"
 
 
 class BasePaginationGridView(BasePaginationListView):
@@ -163,7 +163,7 @@ class BasePaginationGridView(BasePaginationListView):
     Use a custom template for iterate a list in a grid
     Uses django.core.paginator to slice the result in pages
     """
-    template_name = "base/%s/pagination_grid.html" % base_conf.style
+    template_name = "pagination_grid.html"
 
 
 class BaseDetailView(BaseView, generic.DetailView):
@@ -171,7 +171,7 @@ class BaseDetailView(BaseView, generic.DetailView):
     View based on DetailView from django.views.generic.
     Shows all attributes and values of an object
     """
-    template_name = "{}/detail.html".format(base_conf.style)
+    template_name = "detail.html"
     context_object_name = "element"
 
     def get_context_data(self, **kwargs):
@@ -189,7 +189,7 @@ class BaseDeleteView(BaseView, generic.DeleteView):
     View based on Delete view from django.views.generic
     Show a list with all elements to be delete and delete it on post
     """
-    template_name = "{}/delete.html".format(base_conf.style)
+    template_name = "delete.html"
     context_object_name = "object"
 
     def get_context_data(self, **kwargs):

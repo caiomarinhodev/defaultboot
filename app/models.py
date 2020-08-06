@@ -39,7 +39,7 @@ class Produto(TimeStamped):
     name = models.CharField(max_length=225, blank=True, null=True)
     sku = models.UUIDField()
     stock = models.PositiveIntegerField()
-    price = valor_base = MoneyField(max_digits=14, decimal_places=2, validators=[MinValueValidator(Money(0, 'BRL'))])
+    price = MoneyField(max_digits=14, decimal_places=2, validators=[MinValueValidator(Money(0, 'BRL'))])
 
     def __str__(self):
         return self.name

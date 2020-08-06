@@ -26,7 +26,7 @@ UPDATE_SUFFIX = "_update"
 DELETE_SUFFIX = "_delete"
 
 API_SUFFIX = "_api"
-style = get_from_settings_or_default('BASE_TEMPLATES_FOLDER', "base/bootstrap")
+style = "base_django/flexbox"
 
 
 # Messages

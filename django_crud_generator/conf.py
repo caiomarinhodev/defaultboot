@@ -3,8 +3,12 @@
 """
 Global variables for base module
 """
+import os
+
 from django.utils.translation import ugettext_lazy as _
 from django.conf import LazySettings
+
+from default.settings import BASE_DIR
 
 settings = LazySettings()
 
@@ -26,8 +30,7 @@ UPDATE_SUFFIX = "_update"
 DELETE_SUFFIX = "_delete"
 
 API_SUFFIX = "_api"
-style = get_from_settings_or_default('BASE_TEMPLATES_FOLDER', "app/templates")
-
+style = os.path.join(BASE_DIR, 'app/templates')
 
 # Messages
 OBJECT_CREATED_SUCCESSFULLY = _("Object created successfully")

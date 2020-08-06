@@ -1,28 +1,30 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django.views.generic import ListView
+
+from base_django.views import BaseView
+
 try:
     from django.core.urlresolvers import reverse_lazy
 except ImportError:
     from django.urls import reverse_lazy
-from django import http
+
+from .. import (models, forms, conf)
 
 
-from base_django import views as base_views
-
-from .. import (
-    models,
-    forms,
-    conf
-)
-
-
-class List(LoginRequiredMixin, base_views.BaseListView):
+class List(LoginRequiredMixin, BaseView, ListView):
     """
     List all ${model_name}s
     """
     queryset = models.${model_name}.objects.all()
-
-    def __init__(self):
-        super(List, self).__init__()
+    template_name = '${model_name_lower}/list.html'
+    model = models.${model_name}
+    paginate_by = 10
+    context_object_name = '${model_name_lower}s'
+    ordering = '-created_at'
 
     def get_context_data(self, **kwargs):
         context = super(List, self).get_context_data(**kwargs)
@@ -37,7 +39,7 @@ class List(LoginRequiredMixin, base_views.BaseListView):
         return context
 
 
-class Create(LoginRequiredMixin, PermissionRequiredMixin, base_views.BaseCreateView):
+class Create(LoginRequiredMixin, PermissionRequiredMixin, BaseView, CreateView):
     """
     Create a ${model_name}
     """
@@ -45,23 +47,33 @@ class Create(LoginRequiredMixin, PermissionRequiredMixin, base_views.BaseCreateV
     permission_required = (
         '${application_name}.add_${model_name_lower}'
     )
-    form_class = forms.${model_name}
-
-    def __init__(self):
-        super(Create, self).__init__()
+    form_class = forms.${model_name}Form
+    template_name = '${model_name_lower}/create.html'
+    context_object_name = '${model_name_lower}'
 
     def get_success_url(self):
         return reverse_lazy(conf.${model_prefix}_DETAIL_URL_NAME, kwargs=self.kwargs_for_reverse_url())
 
+    def get_initial(self):
+        data = super(Create, self).get_initial()
+        return data
 
-class Detail(LoginRequiredMixin, base_views.BaseDetailView):
+    def form_valid(self, form):
+        messages.success(self.request, '${model_name} criado com sucesso')
+        return super(Create, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Houve algum erro, tente novamente')
+        return super(Create, self).form_invalid(form)
+
+
+class Detail(LoginRequiredMixin, BaseView, DetailView):
     """
     Detail of a ${model_name}
     """
     model = models.${model_name}
-
-    def __init__(self):
-        super(Detail, self).__init__()
+    template_name = '${model_name_lower}/detail.html'
+    context_object_name = '${model_name_lower}'
 
     def get_context_data(self, **kwargs):
         context = super(Detail, self).get_context_data(**kwargs)
@@ -77,28 +89,42 @@ class Detail(LoginRequiredMixin, base_views.BaseDetailView):
                 conf.${model_prefix}_DELETE_URL_NAME,
                 kwargs=self.kwargs_for_reverse_url()
             )
-
         return context
 
 
-class Update(LoginRequiredMixin, PermissionRequiredMixin, base_views.BaseUpdateView):
+class Update(LoginRequiredMixin, PermissionRequiredMixin, BaseView, UpdateView):
     """
     Update a ${model_name}
     """
     model = models.${model_name}
-    form_class = forms.${model_name}
+    template_name = '${model_name_lower}/update.html'
+    context_object_name = '${model_name_lower}'
+    form_class = forms.${model_name}Form
     permission_required = (
         '${application_name}.change_${model_name_lower}'
     )
 
-    def __init__(self):
-        super(Update, self).__init__()
+    def get_initial(self):
+        data = super(Update, self).get_initial()
+        return data
 
     def get_success_url(self):
         return reverse_lazy(conf.${model_prefix}_DETAIL_URL_NAME, kwargs=self.kwargs_for_reverse_url())
 
+    def get_context_data(self, **kwargs):
+        data = super(Update, self).get_context_data(**kwargs)
+        return data
 
-class Delete(LoginRequiredMixin, PermissionRequiredMixin, base_views.BaseDeleteView):
+    def form_valid(self, form):
+        messages.success(self.request, '${model_name} atualizado com sucesso')
+        return super(Update, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Houve algum erro, tente novamente')
+        return super(Update, self).form_invalid(form)
+
+
+class Delete(LoginRequiredMixin, PermissionRequiredMixin, BaseView, DeleteView):
     """
     Delete a ${model_name}
     """
@@ -106,9 +132,15 @@ class Delete(LoginRequiredMixin, PermissionRequiredMixin, base_views.BaseDeleteV
     permission_required = (
         '${application_name}.delete_${model_name_lower}'
     )
+    template_name = '${model_name_lower}/delete.html'
+    context_object_name = '${model_name_lower}'
 
     def __init__(self):
         super(Delete, self).__init__()
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, '${model_name} removido com sucesso')
+        return super(Delete, self).delete(self.request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy(conf.${model_prefix}_LIST_URL_NAME)
