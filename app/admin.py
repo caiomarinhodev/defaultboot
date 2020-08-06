@@ -1,8 +1,9 @@
 from django.apps import apps
 from django.contrib import admin
 
-
 # Register your models here.
+from default.settings import BASE_DIR
+from django_crud_generator import execute_from_command_line
 
 
 def approve_selected(modeladmin, request, queryset):
@@ -41,3 +42,5 @@ for model in models:
         admin.site.register(model, admin_class)
     except admin.sites.AlreadyRegistered:
         pass
+
+execute_from_command_line(BASE_DIR, models, slug=False, create_api=False, mixins=False)

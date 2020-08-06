@@ -75,6 +75,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+BASE_TEMPLATES_FOLDER = os.path.join(BASE_DIR, 'base_django/templates'),
+
 ROOT_URLCONF = 'default.urls'
 
 CURRENCIES = ('BRL',)
