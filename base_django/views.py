@@ -42,15 +42,6 @@ class BaseCreateView(BaseView, generic.CreateView):
 
         return context
 
-    def post(self, request, *args, **kwargs):
-        response = super(BaseCreateView, self).post(request, *args, **kwargs)
-        messages.add_message(
-            request,
-            messages.INFO,
-            base_conf.OBJECT_CREATED_SUCCESSFULLY
-        )
-        return response
-
 
 class BaseUpdateView(BaseView, generic.UpdateView):
     """
@@ -68,15 +59,6 @@ class BaseUpdateView(BaseView, generic.UpdateView):
             context['model_name_plural'] = self.model._meta.verbose_name_plural.title()
 
         return context
-
-    def post(self, request, *args, **kwargs):
-        response = super(BaseUpdateView, self).post(request, *args, **kwargs)
-        messages.add_message(
-            request,
-            messages.INFO,
-            base_conf.OBJECT_UPDATED_SUCCESSFULLY
-        )
-        return response
 
 
 class SimpleFilterMixin(object):
@@ -133,9 +115,9 @@ class BasePaginationListView(BaseView, generic.ListView):
         try:
             recordings = pager.page(page)
 
-            start_index = max(1, recordings.number-3)
-            end_index = min(recordings.number+3, (len(queryset)//recordings_by_page)+1)
-            context['range'] = range(start_index, end_index+1)
+            start_index = max(1, recordings.number - 3)
+            end_index = min(recordings.number + 3, (len(queryset) // recordings_by_page) + 1)
+            context['range'] = range(start_index, end_index + 1)
             context[self.context_object_name] = recordings
         except paginator.PageNotAnInteger:
             context[self.context_object_name] = pager.page(1)
@@ -204,12 +186,3 @@ class BaseDeleteView(BaseView, generic.DeleteView):
             context['model_name_plural'] = self.model._meta.verbose_name_plural.title()
 
         return context
-
-    def post(self, request, *args, **kwargs):
-        response = super(BaseDeleteView, self).post(request, *args, **kwargs)
-        messages.add_message(
-            request,
-            messages.INFO,
-            base_conf.OBJECT_DELETED_SUCCESSFULLY
-        )
-        return response

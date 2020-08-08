@@ -38,6 +38,7 @@ class ListAdminMixin(object):
             self.actions = [approve_selected, desapprove_selected]
         super(ListAdminMixin, self).__init__(model, admin_site)
 
+
 models = apps.get_models()
 for model in models:
     admin_class = type('AdminClass', (ListAdminMixin, admin.ModelAdmin), {})
@@ -45,5 +46,6 @@ for model in models:
         admin.site.register(model, admin_class)
     except admin.sites.AlreadyRegistered:
         pass
+
 
 #execute_from_command_line('app', slug=False, create_api=False, mixins=False)

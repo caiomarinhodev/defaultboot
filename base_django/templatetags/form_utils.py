@@ -4,6 +4,11 @@ from django.template.loader import get_template
 register = template.Library()
 
 
+@register.filter()
+def get_fields(obj):
+    return [(field.name, field.value_to_string(obj)) for field in obj._meta.fields]
+
+
 @register.filter("add_formset_element")
 def add_formset_element_js(formset):
     # We just use the first column

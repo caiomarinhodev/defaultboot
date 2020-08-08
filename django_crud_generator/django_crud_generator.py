@@ -11,7 +11,7 @@ import sys
 
 from django.apps import apps
 
-from default.settings import BASE_DIR
+# from default.settings import BASE_DIR
 
 BASE_TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
 VIEW_CLASSES = [
@@ -190,7 +190,7 @@ def generic_insert_with_folder(folder_name, file_name, template_name, checking_c
             )
     ):
         print("All classes {} already on file {}".format(", ".join(checking_classes), file_name))
-        return
+        return 0
 
     # Load content from template
     render_template_with_args_in_file(
@@ -205,6 +205,7 @@ def generic_insert_with_folder(folder_name, file_name, template_name, checking_c
         application_name=args['django_application_folder'].split("/")[-1]
     )
     view_file.close()
+    return 1
 
 
 def api(args):
@@ -213,7 +214,6 @@ def api(args):
 
 def execute_from_command_line(django_application_folder, slug=False, create_api=False, mixins=False):
     models = apps.get_models()
-    BASE_TEMPLATES_DIR = os.path.join(BASE_DIR, django_application_folder, 'templates')
     for model in models:
         args = {}
         # If model prefix is not defined, we'll going to define model_prefix as
@@ -241,87 +241,141 @@ def execute_from_command_line(django_application_folder, slug=False, create_api=
                 VIEW_CLASSES,
                 args
             )
-
             permission_class_name = "{}Permission".format(args["model_name"])
-            generic_insert_with_folder(
+            flag = generic_insert_with_folder(
                 "tests",
                 "test_{}".format(simplified_file_name),
                 "tests.py.tmpl",
                 [permission_class_name],
                 args
             )
+            if flag != 0:
+                inject_modules(args, create_api, mixins, simplified_file_name, slug)
+                copy_templates(args)
+                copy_template_tags(args)
 
-            modules_to_inject = [
-                'conf',
-                'forms',
-                'admin'
-            ]
-            if slug:
-                modules_to_inject.append('urls_slug')
-            else:
-                modules_to_inject.append('urls')
-            if create_api:
-                modules_to_inject += [
-                    'serializers',
-                    'viewsets',
-                    'urls_api'
-                ]
-            if mixins:
-                modules_to_inject.append('mixins')
 
-            for module in modules_to_inject:
-                generic_insert_module(
-                    module,
-                    args,
-                    model_name=args['model_name'],
-                    model_prefix=args['model_prefix'],
-                    url_pattern=args['url_pattern'],
-                    view_file=simplified_file_name,
-                    model_name_lower=args['model_name'].lower()
-                )
+def inject_modules(args, create_api, mixins, simplified_file_name, slug):
+    modules_to_inject = [
+        'conf',
+        'forms',
+        'admin'
+    ]
+    if slug:
+        modules_to_inject.append('urls_slug')
+    else:
+        modules_to_inject.append('urls')
+    if create_api:
+        modules_to_inject += [
+            'serializers',
+            'viewsets',
+            'urls_api'
+        ]
+    if mixins:
+        modules_to_inject.append('mixins')
+    for module in modules_to_inject:
+        generic_insert_module(
+            module,
+            args,
+            model_name=args['model_name'],
+            model_prefix=args['model_prefix'],
+            url_pattern=args['url_pattern'],
+            view_file=simplified_file_name,
+            model_name_lower=args['model_name'].lower()
+        )
+    # This is just a fix to link api_urls with urls
+    if create_api:
+        render_template_with_args_in_file(
+            create_or_open(
+                os.path.join(
+                    args['django_application_folder'],
+                    BASE_TEMPLATES_DIR,
+                    'urls.py'
+                ),
+                "",
+                args
+            ),
+            os.path.join(
+                BASE_TEMPLATES_DIR,
+                "urls_api_urls_patch.py.tmpl"
+            )
+        )
 
-            for item in VIEW_CLASSES:
-                # TODO: Mudar o template para um CHOICES (DASHBOARD, AGENCY, BLOG, STORE)
-                original = os.path.join(
-                    'base_django',
-                    'templates',
-                    'base',
-                    'bootstrap',
-                    convert(item.strip().lower() + '.html')
-                )
-                target = os.path.join(
+
+def copy_templates(args):
+    for basic in [
+        '404.html', '500.html', 'base.html', 'base_error.html', 'loading.html', 'breadcrumb.html', 'menu.html'
+    ]:
+        original = os.path.join(
+            'base_django',
+            'templates',
+            basic
+        )
+        target = os.path.join(
+            args['django_application_folder'],
+            'templates',
+            basic
+        )
+        shutil.copy(original, target)
+
+    for item in VIEW_CLASSES:
+        # TODO: Mudar o template para um CHOICES (DASHBOARD, AGENCY, BLOG, STORE)
+        original = os.path.join(
+            'base_django',
+            'templates',
+            'base',
+            'bootstrap',
+            convert(item.strip().lower() + '.html')
+        )
+        target = os.path.join(
+            args['django_application_folder'],
+            'templates',
+            convert(args['model_name'].strip().lower()),
+            convert(item.strip().lower() + '.html')
+        )
+        if not os.path.isdir(
+                os.path.join(
                     args['django_application_folder'],
                     'templates',
-                    convert(args['model_name'].strip().lower()),
-                    convert(item.strip().lower() + '.html')
-                )
-                if not os.path.isdir(
-                        os.path.join(
-                            args['django_application_folder'],
-                            'templates',
-                            convert(args['model_name'].strip().lower()))):
-                    os.mkdir(
-                        os.path.join(
-                            args['django_application_folder'],
-                            'templates',
-                            convert(args['model_name'].strip().lower()))
-                    )
-                shutil.copy(original, target)
+                    convert(args['model_name'].strip().lower()))):
+            os.mkdir(
+                os.path.join(
+                    args['django_application_folder'],
+                    'templates',
+                    convert(args['model_name'].strip().lower()))
+            )
+        shutil.copy(original, target)
 
-            # This is just a fix to link api_urls with urls
-            if create_api:
-                render_template_with_args_in_file(
-                    create_or_open(
-                        os.path.join(
-                            args['django_application_folder'],
-                            BASE_TEMPLATES_DIR,
-                            'urls.py'
-                        ),
-                        "",
-                        args
-                    ),
-                    os.path.join(
-                        BASE_TEMPLATES_DIR,
-                        "urls_api_urls_patch.py.tmpl"
-                    )
+
+def copy_template_tags(args):
+    for item in ['form_utils.py', 'input_checker.py', 'math_utils.py', 'type_utils.py']:
+        original = os.path.join(
+            'base_django',
+            'templatetags',
+            item
+        )
+        target = os.path.join(
+            args['django_application_folder'],
+            'templatetags',
+            item
+        )
+        if not os.path.isdir(
+                os.path.join(
+                    args['django_application_folder'],
+                    'templatetags')):
+            os.mkdir(
+                os.path.join(
+                    args['django_application_folder'],
+                    'templatetags'
                 )
+            )
+            init_file = codecs.open(
+                os.path.join(
+                    args['django_application_folder'],
+                    'templatetags',
+                    '__init__.py'
+                ),
+                'w+'
+            )
+            init_file.close()
+        shutil.copy(original, target)

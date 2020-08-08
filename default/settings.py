@@ -60,8 +60,14 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.facebook',
     # 'allauth.socialaccount.providers.google',
     'djmoney',
+    'crispy_forms',
+    'django_tables2',
     'app',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap.html"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
