@@ -96,7 +96,7 @@ def field_to_widget(field):
     if type(field) is DateTimeField:
         return DateTimeInput(attrs={"class": "form-control datetimepicker"})
 
-    return Input(attrs={"class": "form-control"})
+    return TextInput(attrs={"class": "form-control", "rows": 1})
 
 
 def generate_bootstrap_widgets_for_all_fields(model):

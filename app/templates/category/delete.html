@@ -1,36 +1,39 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load staticfiles %}
 
 {% block content %}
-    <form action="" method="post">{% csrf_token %}
-        {% include 'breadcrumb.html' with title='Remover' subtitle='Remova os itens que são desnecessários.' link1='Model' link2='Remover' %}
+    <style>
+        .pg-product-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ff8700;
+        }
+    </style>
 
-        <div class="box box-primary" style="margin-top: 30px">
-            <div class="box-body">
-                <div class="row">
-                    <div class="text-center">
-                        <h3>Você realmente deseja deletar "{{ object }}" ?</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="box-footer">
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-2">
-                        <a href="javascript:window.history.back();">
-                            <button id="btn_cancelar" type="button" class="btn btn-default btn-lg btn-block">Cancelar</button>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-danger btn-lg btn-block pull-right">Deletar</button>
-                    </div>
+    <div class="container">
+        <div class="row ">
+            <div class="col s12 m12 l12 ">
+                <div class="section-title">
+                    <span class="theme-secondary-color">Remover</span>
                 </div>
             </div>
         </div>
-    </form>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#model').addClass('active');
-            $('#model-list').addClass('active');
-        });
-    </script>
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <form class="col s12 center" method="post">
+                    {% csrf_token %}
+                    <span class="theme-form ">Você realmente deseja deletar "{{ object }}" ?</span>
+
+                    <div class="row">
+                        <div class="input-field col s12 m6 l4 offset-m3 offset-l4 center">
+                            <button class="waves-effect waves-light btn" type="submit">Remover</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
 {% endblock %}

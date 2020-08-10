@@ -252,9 +252,8 @@ def execute_from_command_line(django_application_folder, type='dashboard', slug=
             )
             if flag != 0:
                 inject_modules(args, create_api, mixins, simplified_file_name, slug)
-                if type == 'dashboard':
-                    copy_account(args)
-                    copy_templates(args)
+                copy_account(args)
+                copy_templates(args)
                 copy_template_tags(args)
 
 
@@ -323,7 +322,7 @@ def copy_account(args):
         original = os.path.join(
             'base_django',
             'templates',
-            'dashboard',
+            args['type'],
             'account',
             basic
         )
@@ -336,13 +335,20 @@ def copy_account(args):
 
 
 def copy_templates(args):
-    for basic in [
-        '404.html', '500.html', 'base.html', 'base_error.html', 'loading.html', 'breadcrumb.html', 'menu.html'
-    ]:
+    lista = []
+    if args['type'] == 'dashboard':
+        lista = [
+            '404.html', '500.html', 'base.html', 'base_error.html', 'loading.html', 'breadcrumb.html', 'menu.html'
+        ]
+    elif args['type'] == 'aplicativo':
+        lista = [
+            '404.html', '500.html', 'base.html', 'footer.html', 'header.html', 'nav.html'
+        ]
+    for basic in lista:
         original = os.path.join(
             'base_django',
             'templates',
-            'dashboard',
+            args['type'],
             basic
         )
         target = os.path.join(
@@ -367,7 +373,7 @@ def copy_templates(args):
         original = os.path.join(
             'base_django',
             'templates',
-            'dashboard',
+            args['type'],
             'model',
             convert(item.strip().lower() + '.html')
         )
