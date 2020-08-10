@@ -212,13 +212,14 @@ def api(args):
     pass
 
 
-def execute_from_command_line(django_application_folder, slug=False, create_api=False, mixins=False):
+def execute_from_command_line(django_application_folder, type='dashboard', slug=False, create_api=False, mixins=False):
     models = apps.get_models()
     for model in models:
         args = {}
         # If model prefix is not defined, we'll going to define model_prefix as
         # model_name in uppercase
         args['model_name'] = str(model.__name__)
+        args['type'] = str(type)
         args['model_prefix'] = str(model.__name__).upper()
         args['django_application_folder'] = django_application_folder
         args['url_pattern'] = str(model.__name__).lower()
@@ -251,7 +252,9 @@ def execute_from_command_line(django_application_folder, slug=False, create_api=
             )
             if flag != 0:
                 inject_modules(args, create_api, mixins, simplified_file_name, slug)
-                copy_templates(args)
+                if type == 'dashboard':
+                    copy_account(args)
+                    copy_templates(args)
                 copy_template_tags(args)
 
 
@@ -302,6 +305,36 @@ def inject_modules(args, create_api, mixins, simplified_file_name, slug):
         )
 
 
+def copy_account(args):
+    if not os.path.isdir(
+            os.path.join(
+                args['django_application_folder'],
+                'templates',
+                'account')):
+        os.mkdir(
+            os.path.join(
+                args['django_application_folder'],
+                'templates',
+                'account')
+        )
+    for basic in [
+        'login.html', 'password_change.html', 'password_reset.html', 'signup.html',
+    ]:
+        original = os.path.join(
+            'base_django',
+            'templates',
+            'dashboard',
+            'account',
+            basic
+        )
+        target = os.path.join(
+            args['django_application_folder'],
+            'templates',
+            'account'
+        )
+        shutil.copy(original, target)
+
+
 def copy_templates(args):
     for basic in [
         '404.html', '500.html', 'base.html', 'base_error.html', 'loading.html', 'breadcrumb.html', 'menu.html'
@@ -309,6 +342,7 @@ def copy_templates(args):
         original = os.path.join(
             'base_django',
             'templates',
+            'dashboard',
             basic
         )
         target = os.path.join(
@@ -319,20 +353,6 @@ def copy_templates(args):
         shutil.copy(original, target)
 
     for item in VIEW_CLASSES:
-        # TODO: Mudar o template para um CHOICES (DASHBOARD, AGENCY, BLOG, STORE)
-        original = os.path.join(
-            'base_django',
-            'templates',
-            'base',
-            'bootstrap',
-            convert(item.strip().lower() + '.html')
-        )
-        target = os.path.join(
-            args['django_application_folder'],
-            'templates',
-            convert(args['model_name'].strip().lower()),
-            convert(item.strip().lower() + '.html')
-        )
         if not os.path.isdir(
                 os.path.join(
                     args['django_application_folder'],
@@ -344,6 +364,19 @@ def copy_templates(args):
                     'templates',
                     convert(args['model_name'].strip().lower()))
             )
+        original = os.path.join(
+            'base_django',
+            'templates',
+            'dashboard',
+            'model',
+            convert(item.strip().lower() + '.html')
+        )
+        target = os.path.join(
+            args['django_application_folder'],
+            'templates',
+            convert(args['model_name'].strip().lower()),
+            convert(item.strip().lower() + '.html')
+        )
         shutil.copy(original, target)
 
 

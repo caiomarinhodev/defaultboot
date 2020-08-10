@@ -18,28 +18,11 @@ class TimeStamped(models.Model):
     published_at = models.DateTimeField(auto_now=True)
 
 
-class Profile(TimeStamped):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    cpf = CPFField()
-    phone = PhoneField()
-
-    def __str__(self):
-        return self.user.username
-
-
 class Category(TimeStamped):
     name = models.CharField(max_length=225, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Produto(TimeStamped):
-    category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=225, blank=True, null=True)
-    sku = models.UUIDField()
     stock = models.PositiveIntegerField()
-    price = MoneyField(max_digits=14, decimal_places=2, validators=[MinValueValidator(Money(0, 'BRL'))])
+    address = models.CharField(max_length=225, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return self.name
