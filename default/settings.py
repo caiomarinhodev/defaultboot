@@ -47,21 +47,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'cpf_field',
-    'phone_field',
-    'phonenumber_field',
-    'rest_framework',
-    'django_extensions',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'mptt',
-    'django_filters',
+    #'cpf_field',
+    #'phone_field',
+    #'phonenumber_field',
+    #'rest_framework',
+    #'django_extensions',
+    #'allauth',
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'mptt',
+    #'django_filters',
 
     # 'allauth.socialaccount.providers.facebook',
     # 'allauth.socialaccount.providers.google',
 
-    'djmoney',
+    #'djmoney',
     'app',
 ]
 
@@ -166,5 +166,5 @@ STATICFILES_DIRS = [
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

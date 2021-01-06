@@ -1,6 +1,6 @@
-dj-database-url
-Django==2.2
-gunicorn
+dj-database-url==0.4.0
+Django==2.2.16
+gunicorn==19.4.5
 psycopg2-binary
 pycpfcnpj
 pyimgur
@@ -9,7 +9,6 @@ django-cpf
 beautifulsoup4
 django-phone-field
 django-phonenumber-field[phonenumbers]
-django-suit
 pytz
 django-search-views
 djangorestframework
@@ -24,3 +23,5 @@ django-ckeditor==5.0.3
 pyfcm
 
 django-crud-generator
+
+jsbeautifier
