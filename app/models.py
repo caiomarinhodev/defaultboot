@@ -10,5 +10,3 @@ class TimeStamped(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     published_at = models.DateTimeField(auto_now=True)
-
-

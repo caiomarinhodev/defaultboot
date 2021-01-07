@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
+from django.db import IntegrityError
 
 
 class Command(BaseCommand):
@@ -16,7 +17,8 @@ class Command(BaseCommand):
             User.objects.create_superuser(username=superuser_data['username'],
                                           email=superuser_data['email'],
                                           password=superuser_data['password'])
-
+        except (IntegrityError,):
+            raise CommandError('Usuario ja existe.')
         except (Exception,):
             raise CommandError('Erro ao gerar usuario')
         self.stdout.write(self.style.SUCCESS('Successfully user created'))
