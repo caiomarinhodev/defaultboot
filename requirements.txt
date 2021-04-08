@@ -5,7 +5,7 @@ chardet==3.0.4
 cryptography==3.3.1
 defusedxml==0.6.0
 dj-database-url==0.4.0
-Django==2.2.16
+Django==2.2.20
 django-allauth==0.44.0
 django-ckeditor==5.0.3
 django-cpf==0.1.0
